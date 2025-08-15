@@ -1,0 +1,27 @@
+  # print(weather_data.status_code) output 200 means working 13
+
+# print(weather_data.json())  this send all data of user input 14
+'''
+{'coord': {'lon': 77.2167, 'lat': 28.6667}, 'weather': [{'id': 803, 'main': 'Clouds', 'description': 'broken clouds', 'icon': '04n'}], 'base': 'stations', 'main': {'temp': 31.42, 'feels_like': 38.42, 'temp_min': 31.42, 'temp_max': 31.42, 'pressure': 1002, 'humidity': 81, 'sea_level': 1002, 'grnd_level': 976}, 'visibility': 10000, 'wind': {'speed': 1.75, 'deg': 42, 'gust': 2.41}, 'clouds': {'all': 82}, 'dt': 1755270112, 'sys': {'country': 'IN', 'sunrise': 1755217221, 'sunset': 1755264672}, 'timezone': 19800, 'id': 1273294, 'name': 'Delhi', 'cod': 200}
+'''
+
+'''
+Questions:- 
+1} mein temperature ko celcius mein kaise badlo.
+2} in lines ka kya matlab h
+
+    weather = weather_data.json()['weather'][0]['main']
+    temp = weather_data.json()['main']['temp']
+'''
+
+'''
+learn
+matric for celcius
+imperial for feherenheit
+
+ques} Kya hai API Key?
+ans}
+API “Application Programming Interface” hoti hai jo doosri website se data la sakti hai.
+
+API Key ek password jaisa hai, Jo hume data lene ki permission deta hai.'''
+'''
