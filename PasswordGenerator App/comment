@@ -1,0 +1,7 @@
+line 5 # (A-Z , a-z) , (0 - 9) , ($,/ all special sybols etc)
+
+line 8  # ex = 9, 8 etc
+
+line 10 # .join used to add all characters in single string
+# .choices (select random(repeated) charcacters from random characters)
+# .choice (select only single digit) code = .choice(all_characters), without lenght

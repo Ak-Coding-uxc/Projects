@@ -1,0 +1,8 @@
+1) import random for generating random password
+and string module for move all characters in 1 variable
+
+2) Now move all characters(1,A-Z,a-z, special characters($,&) etc ) 1 variable
+
+3) make random password in variable usin randrom module method
+ 
+4) print password
