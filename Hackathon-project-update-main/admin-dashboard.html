@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Disaster Ready System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .admin-avatar {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .admin-details h2 {
+            margin-bottom: 5px;
+            font-size: 1.6rem;
+        }
+        
+        .admin-details small {
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .notification-bell {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-bell:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .time-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+        }
+        
+        .dashboard-nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .nav-tab {
+            background: transparent;
+            border: none;
+            padding: 18px 30px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active {
+            color: #e74c3c;
+            border-bottom-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.05);
+        }
+        
+        .nav-tab:hover {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.05);
+        }
+        
+        .dashboard-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .stat-card.users::before { background: linear-gradient(90deg, #3498db, #2980b9); }
+        .stat-card.activity::before { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+        .stat-card.alerts::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+        .stat-card.system::before { background: linear-gradient(90deg, #f39c12, #e67e22); }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.users { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .stat-icon.activity { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .stat-icon.alerts { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .stat-icon.system { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .dashboard-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dashboard-card h3 {
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        /* Notification Broadcasting Form */
+        .broadcast-form {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 8px 8px 8px 0;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .action-btn.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+        }
+        
+        .action-btn.info {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        /* User Management Table */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .user-table th,
+        .user-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .user-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .user-table tr:hover {
+            background: rgba(231, 76, 60, 0.05);
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.online {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-badge.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="admin-info">
+            <div class="admin-avatar" id="adminAvatar">A</div>
+            <div class="admin-details">
+                <h2><span id="adminName">Loading...</span></h2>
+                <small>
+                    <i class="fas fa-shield-alt"></i> <span id="adminRole">Administrator</span>
+                    <span style="margin: 0 10px;">|</span>
+                    <i class="fas fa-building"></i> <span id="adminDepartment">System Control</span>
+                </small>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="notification-bell" onclick="toggleNotifications()">
+                <i class="fas fa-bell"></i>
+                <div class="notification-badge" id="notificationCount">0</div>
+            </div>
+            <div class="time-display">
+                <i class="fas fa-clock"></i> <span id="currentDateTime"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard Navigation -->
+    <div class="dashboard-nav">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">
+                <i class="fas fa-tachometer-alt"></i> System Overview
+            </button>
+            <button class="nav-tab" onclick="showTab('notifications')">
+                <i class="fas fa-bullhorn"></i> Broadcast Center
+            </button>
+            <button class="nav-tab" onclick="showTab('users')">
+                <i class="fas fa-users"></i> User Management
+            </button>
+            <button class="nav-tab" onclick="showTab('emergency')">
+                <i class="fas fa-exclamation-triangle"></i> Emergency Control
+            </button>
+            <button class="nav-tab" onclick="showTab('analytics')">
+                <i class="fas fa-chart-bar"></i> Analytics
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats-overview">
+                <div class="stat-card users">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" id="totalUsers">0</div>
+                            <div style="color: #666; font-size: 1rem; font-weight: 600;">Total Users</div>
+                            <div style="font-size: 0.9rem; color: #2ecc71; margin-top: 5px;">
+                                <i class="fas fa-arrow-up"></i> Active System
+                            </div>
+                        </div>
+                        <div class="stat-icon users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card activity">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" id="activeUsers">0</div>
+                            <div style="color: #666; font-size: 1rem; font-weight: 600;">Online Now</div>
+                            <div style="font-size: 0.9rem; color: #2ecc71; margin-top: 5px;">
+                                <i class="fas fa-circle"></i> Live Activity
+                            </div>
+                        </div>
+                        <div class="stat-icon activity">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card alerts">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" id="totalAlerts">0</div>
+                            <div style="color: #666; font-size: 1rem; font-weight: 600;">Active Alerts</div>
+                            <div style="font-size: 0.9rem; color: #e74c3c; margin-top: 5px;">
+                                <i class="fas fa-exclamation-triangle"></i> Monitoring
+                            </div>
+                        </div>
+                        <div class="stat-icon alerts">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card system">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" id="systemHealth">98%</div>
+                            <div style="color: #666; font-size: 1rem; font-weight: 600;">System Health</div>
+                            <div style="font-size: 0.9rem; color: #2ecc71; margin-top: 5px;">
+                                <i class="fas fa-check-circle"></i> Optimal
+                            </div>
+                        </div>
+                        <div class="stat-icon system">
+                            <i class="fas fa-server"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Quick Actions -->
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                        Emergency Actions
+                    </h3>
+                    <button class="action-btn" onclick="broadcastEmergency('fire')">
+                        <i class="fas fa-fire"></i> Fire Emergency Alert
+                    </button>
+                    <button class="action-btn warning" onclick="broadcastEmergency('earthquake')">
+                        <i class="fas fa-house-damage"></i> Earthquake Alert
+                    </button>
+                    <button class="action-btn success" onclick="broadcastEmergency('drill')">
+                        <i class="fas fa-running"></i> Schedule Drill
+                    </button>
+                    <button class="action-btn info" onclick="systemStatus()">
+                        <i class="fas fa-cogs"></i> System Check
+                    </button>
+                </div>
+
+                <!-- Recent System Activities -->
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-history"></i></div>
+                        System Activities
+                    </h3>
+                    <div id="systemActivities">
+                        <div style="padding: 15px 0; border-bottom: 1px solid #eee;">
+                            <strong>Emergency drill completed</strong><br>
+                            <small>All buildings - 5 minutes ago</small>
+                        </div>
+                        <div style="padding: 15px 0; border-bottom: 1px solid #eee;">
+                            <strong>Weather alert sent</strong><br>
+                            <small>Heavy rain warning - 1 hour ago</small>
+                        </div>
+                        <div style="padding: 15px 0;">
+                            <strong>System backup completed</strong><br>
+                            <small>Database backup - 2 hours ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Broadcast Center Tab -->
+        <div id="notifications" class="tab-content">
+            <div class="dashboard-card">
+                <h3>
+                    <div class="card-icon"><i class="fas fa-bullhorn"></i></div>
+                    Broadcast Notification
+                </h3>
+                <div class="broadcast-form">
+                    <form id="broadcastForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="notificationTitle">Notification Title</label>
+                                <input type="text" id="notificationTitle" placeholder="Enter notification title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="notificationType">Priority Level</label>
+                                <select id="notificationType" required>
+                                    <option value="info">Information</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="success">Success</option>
+                                    <option value="danger">Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="notificationMessage">Message Content</label>
+                            <textarea id="notificationMessage" rows="4" placeholder="Enter detailed message..." required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="targetAudience">Target Audience</label>
+                                <select id="targetAudience" required>
+                                    <option value="all">Everyone</option>
+                                    <option value="student">Students Only</option>
+                                    <option value="teacher">Teachers Only</option>
+                                    <option value="admin">Admins Only</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="action-btn" style="width: 100%; margin: 0;">
+                                    <i class="fas fa-paper-plane"></i> Send Notification
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Recent Notifications -->
+            <div class="dashboard-card">
+                <h3>
+                    <div class="card-icon"><i class="fas fa-list"></i></div>
+                    Recent Broadcasts
+                </h3>
+                <div id="recentNotifications">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Tab -->
+        <div id="users" class="tab-content">
+            <div class="dashboard-card">
+                <h3>
+                    <div class="card-icon"><i class="fas fa-users"></i></div>
+                    User Management
+                </h3>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Last Login</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Emergency Control Tab -->
+        <div id="emergency" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        Emergency Protocols
+                    </h3>
+                    <button class="action-btn" onclick="activateProtocol('lockdown')">
+                        <i class="fas fa-lock"></i> School Lockdown
+                    </button>
+                    <button class="action-btn warning" onclick="activateProtocol('evacuation')">
+                        <i class="fas fa-running"></i> Mass Evacuation
+                    </button>
+                    <button class="action-btn success" onclick="activateProtocol('allclear')">
+                        <i class="fas fa-check"></i> All Clear Signal
+                    </button>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-phone"></i></div>
+                        Emergency Contacts
+                    </h3>
+                    <div style="padding: 10px 0;">
+                        <div><strong>Police:</strong> 100</div>
+                        <div><strong>Fire Brigade:</strong> 101</div>
+                        <div><strong>Ambulance:</strong> 108</div>
+                        <div><strong>Disaster Management:</strong> 1078</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="dashboard-card">
+                <h3>
+                    <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
+                    System Analytics
+                </h3>
+                <p style="color: #666; margin-bottom: 20px;">Comprehensive analytics dashboard coming soon...</p>
+                <div style="text-align: center; padding: 50px; color: #999;">
+                    <i class="fas fa-chart-line" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                    <h4>Analytics Module</h4>
+                    <p>Advanced reporting and analytics features will be available here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="multi-auth.js"></script>
+    <script>
+        // Initialize admin dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = requireAuth(['admin']);
+            if (user) {
+                initializeAdminDashboard(user);
+                updateDateTime();
+                setInterval(updateDateTime, 60000);
+            }
+        });
+        
+        function initializeAdminDashboard(user) {
+            // Set admin info
+            document.getElementById('adminName').textContent = user.name;
+            document.getElementById('adminRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+            document.getElementById('adminDepartment').textContent = user.department || 'Administration';
+            
+            // Set avatar
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('adminAvatar').textContent = initials;
+            
+            // Load dashboard data
+            loadDashboardStats();
+            loadRecentNotifications();
+            loadUserTable();
+            updateNotificationCount();
+        }
+        
+        function loadDashboardStats() {
+            // Simulate real data
+            animateCounter('totalUsers', 156);
+            animateCounter('activeUsers', 23);
+            animateCounter('totalAlerts', 3);
+        }
+        
+        function animateCounter(elementId, target) {
+            const element = document.getElementById(elementId);
+            let current = 0;
+            const increment = target / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 50);
+        }
+        
+        // Broadcast notification
+        document.getElementById('broadcastForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('notificationTitle').value;
+            const message = document.getElementById('notificationMessage').value;
+            const type = document.getElementById('notificationType').value;
+            const target = document.getElementById('targetAudience').value;
+            
+            const notification = broadcastNotification(title, message, type, target);
+            if (notification) {
+                this.reset();
+                loadRecentNotifications();
+                updateNotificationCount();
+            }
+        });
+        
+        function loadRecentNotifications() {
+            const container = document.getElementById('recentNotifications');
+            const notifications = notificationManager.notifications.slice(0, 5);
+            
+            container.innerHTML = notifications.map(n => `
+                <div style="padding: 15px 0; border-bottom: 1px solid #eee;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <strong>${n.title}</strong><br>
+                            <small>${n.message}</small><br>
+                            <small style="color: #666;">Target: ${n.targetRole} | ${new Date(n.timestamp).toLocaleString()}</small>
+                        </div>
+                        <span class="status-badge ${n.type}" style="background: ${n.type === 'danger' ? '#f8d7da' : n.type === 'warning' ? '#fff3cd' : '#d4edda'}; color: ${n.type === 'danger' ? '#721c24' : n.type === 'warning' ? '#856404' : '#155724'};">
+                            ${n.type.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadUserTable() {
+            const tbody = document.getElementById('userTableBody');
+            const allUsers = [
+                ...USER_DATABASE.students.map(u => ({...u, role: 'Student'})),
+                ...USER_DATABASE.teachers.map(u => ({...u, role: 'Teacher'})),
+                ...USER_DATABASE.admins.map(u => ({...u, role: 'Admin'}))
+            ];
+            
+            tbody.innerHTML = allUsers.map(user => `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.role}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status-badge ${Math.random() > 0.5 ? 'online' : 'offline'}">${Math.random() > 0.5 ? 'Online' : 'Offline'}</span></td>
+                    <td>${new Date().toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function updateNotificationCount() {
+            const count = notificationManager.getUnreadCount('admin');
+            document.getElementById('notificationCount').textContent = count;
+        }
+        
+        // Tab navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Emergency functions
+        function broadcastEmergency(type) {
+            const messages = {
+                fire: { title: 'Fire Emergency Alert', message: 'Fire detected in building. Immediate evacuation required. Follow fire safety procedures.', level: 'danger' },
+                earthquake: { title: 'Earthquake Alert', message: 'Earthquake detected. Drop, Cover, and Hold. Await further instructions.', level: 'danger' },
+                drill: { title: 'Emergency Drill Scheduled', message: 'Emergency evacuation drill scheduled for tomorrow 10:00 AM. All participants must attend.', level: 'warning' }
+            };
+            
+            const msg = messages[type];
+            if (msg && confirm(`Send ${type} alert to everyone?`)) {
+                broadcastNotification(msg.title, msg.message, msg.level, 'all');
+            }
+        }
+        
+        function activateProtocol(protocol) {
+            const protocols = {
+                lockdown: 'School lockdown protocol activated. All doors secured, classes in shelter mode.',
+                evacuation: 'Mass evacuation initiated. All personnel proceed to designated assembly points.',
+                allclear: 'All clear signal sent. Normal activities may resume.'
+            };
+            
+            if (confirm(`Activate ${protocol} protocol?`)) {
+                broadcastNotification(`${protocol.toUpperCase()} Protocol`, protocols[protocol], 'danger', 'all');
+            }
+        }
+        
+        function systemStatus() {
+            showNotification('System status check initiated. All systems operational.', 'success');
+        }
+        
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-IN', options);
+        }
+        
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'alert-item ' + type;
+            notification.innerHTML = `<strong>${message}</strong>`;
+            notification.style.position = 'fixed';
+            notification.style.top = '100px';
+            notification.style.right = '30px';
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '350px';
+            notification.style.animation = 'slideInRight 0.5s ease';
+            notification.style.background = type === 'success' ? '#d4edda' : type === 'danger' ? '#f8d7da' : '#fff3cd';
+            notification.style.color = type === 'success' ? '#155724' : type === 'danger' ? '#721c24' : '#856404';
+            notification.style.padding = '15px 20px';
+            notification.style.borderRadius = '10px';
+            notification.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

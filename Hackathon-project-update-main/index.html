@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Ready - Unified Login System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            animation: slideInUp 0.8s ease;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .login-header h1 {
+            color: #333;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        /* Role Selection Tabs */
+        .role-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 30px;
+            gap: 5px;
+        }
+        
+        .role-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .role-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .role-tab:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .login-btn:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            background: linear-gradient(135deg, #f8d7da, #f1b0b7);
+            color: #721c24;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+            display: none;
+            animation: slideInRight 0.3s ease;
+        }
+        
+        .demo-credentials {
+            background: linear-gradient(135deg, #e8f4f8, #d1ecf1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .demo-credentials h4 {
+            color: #0c5460;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .cred-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .cred-item {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cred-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .cred-item h5 {
+            color: #0c5460;
+            margin-bottom: 5px;
+        }
+        
+        .cred-item p {
+            color: #0c5460;
+            font-size: 0.85rem;
+            margin: 2px 0;
+        }
+        
+        .guest-access {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .guest-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .guest-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #5a67d8;
+        }
+        
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 25px;
+            }
+            
+            .cred-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .role-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>Disaster Ready</h1>
+            <p>Unified Access Portal - School Emergency System</p>
+        </div>
+        
+        <!-- Role Selection -->
+        <div class="role-tabs">
+            <button class="role-tab active" onclick="selectRole('student')">
+                <i class="fas fa-user-graduate"></i> Student
+            </button>
+            <button class="role-tab" onclick="selectRole('teacher')">
+                <i class="fas fa-user-tie"></i> Teacher
+            </button>
+            <button class="role-tab" onclick="selectRole('admin')">
+                <i class="fas fa-user-shield"></i> Admin
+            </button>
+        </div>
+        
+        <form id="unifiedLoginForm">
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="demo-credentials">
+                <h4><i class="fas fa-info-circle"></i> Demo Credentials (Click to Auto-Fill)</h4>
+                <div class="cred-grid">
+                    <div class="cred-item" onclick="autoFill('student1', 'pass123')">
+                        <h5>Student</h5>
+                        <p>student1</p>
+                        <p>pass123</p>
+                    </div>
+                    <div class="cred-item" onclick="autoFill('teacher1', 'pass123')">
+                        <h5>Teacher</h5>
+                        <p>teacher1</p>
+                        <p>pass123</p>
+                    </div>
+                    <div class="cred-item" onclick="autoFill('admin', 'admin123')">
+                        <h5>Admin</h5>
+                        <p>admin</p>
+                        <p>admin123</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="userId" id="userLabel">Student ID or Email</label>
+                <div class="input-wrapper">
+                    <input type="text" id="userId" name="userId" required placeholder="Enter your ID or email">
+                    <i class="fas fa-user input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                    <i class="fas fa-lock input-icon"></i>
+                </div>
+            </div>
+            
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Sign In as <span id="roleText">Student</span>
+            </button>
+        </form>
+        
+        <div class="guest-access">
+            <a href="student-portal.html" class="guest-link">
+                <i class="fas fa-eye"></i> Continue as Guest (View Only)
+            </a>
+        </div>
+    </div>
+    
+    <script src="multi-auth.js"></script>
+    <script>
+        let currentRole = 'student';
+        
+        function selectRole(role) {
+            currentRole = role;
+            
+            // Update tab appearance
+            document.querySelectorAll('.role-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update form labels and placeholders
+            const userLabel = document.getElementById('userLabel');
+            const userInput = document.getElementById('userId');
+            const roleText = document.getElementById('roleText');
+            
+            switch(role) {
+                case 'student':
+                    userLabel.textContent = 'Student ID or Email';
+                    userInput.placeholder = 'Enter your student ID or email';
+                    roleText.textContent = 'Student';
+                    break;
+                case 'teacher':
+                    userLabel.textContent = 'Teacher ID or Email';
+                    userInput.placeholder = 'Enter your teacher ID or email';
+                    roleText.textContent = 'Teacher';
+                    break;
+                case 'admin':
+                    userLabel.textContent = 'Admin ID or Email';
+                    userInput.placeholder = 'Enter your admin ID or email';
+                    roleText.textContent = 'Admin';
+                    break;
+            }
+        }
+        
+        function autoFill(userId, password) {
+            document.getElementById('userId').value = userId;
+            document.getElementById('password').value = password;
+            
+            // Auto-select appropriate role
+            if (userId.includes('student')) selectRoleByName('student');
+            else if (userId.includes('teacher')) selectRoleByName('teacher');
+            else if (userId.includes('admin')) selectRoleByName('admin');
+        }
+        
+        function selectRoleByName(roleName) {
+            // Update role programmatically
+            currentRole = roleName;
+            document.querySelectorAll('.role-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(roleName)) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Update form
+            const roleText = document.getElementById('roleText');
+            roleText.textContent = roleName.charAt(0).toUpperCase() + roleName.slice(1);
+        }
+        
+        document.getElementById('unifiedLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleUnifiedLogin(currentRole);
+        });
+    </script>
+</body>
+</html>

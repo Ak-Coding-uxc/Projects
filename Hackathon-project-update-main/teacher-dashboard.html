@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Disaster Ready System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .teacher-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .teacher-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .teacher-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .teacher-details h2 {
+            margin-bottom: 5px;
+            font-size: 1.5rem;
+        }
+        
+        .teacher-details small {
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .notification-bell {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-bell:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .time-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #ff4757, #ff3838);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #ff3838, #ff2f2f);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.4);
+        }
+        
+        .dashboard-nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .nav-tab {
+            background: transparent;
+            border: none;
+            padding: 18px 30px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-tab:hover::before {
+            left: 100%;
+        }
+        
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .nav-tab:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .dashboard-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-card.students::before { background: linear-gradient(90deg, #3498db, #2980b9); }
+        .stat-card.drills::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+        .stat-card.progress::before { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+        .stat-card.alerts::before { background: linear-gradient(90deg, #f39c12, #e67e22); }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.students { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .stat-icon.drills { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .stat-icon.progress { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .stat-icon.alerts { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .stat-trend {
+            font-size: 0.9rem;
+            color: #2ecc71;
+            margin-top: 5px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dashboard-card h3 {
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 8px 8px 8px 0;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .action-btn.danger {
+            background: linear-gradient(135deg, #ff4757, #ff3838);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+        
+        .action-btn.danger:hover {
+            background: linear-gradient(135deg, #ff3838, #ff2f2f);
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.4);
+        }
+        
+        .action-btn.success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .action-btn.success:hover {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+        
+        .action-btn.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+        }
+        
+        .action-btn.warning:hover {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
+        }
+        
+        .student-list {
+            max-height: 450px;
+            overflow-y: auto;
+        }
+        
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+        
+        .student-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+            margin: 0 -15px;
+            padding-left: 15px;
+            padding-right: 15px;
+            border-radius: 10px;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .student-details h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .student-details small {
+            color: #666;
+        }
+        
+        .progress-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .progress-badge.completed {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .progress-badge.in-progress {
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .progress-badge.not-started {
+            background: linear-gradient(135deg, #f8d7da, #f1b0b7);
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
+        
+        .progress-section {
+            margin: 25px 0;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 1s ease;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .teacher-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .teacher-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-content {
+                padding: 20px 15px;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        .student-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .student-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .student-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Teacher Header -->
+    <div class="teacher-header">
+        <div class="teacher-info">
+            <div class="teacher-avatar" id="teacherAvatar">T</div>
+            <div class="teacher-details">
+                <h2><span id="teacherName">Loading...</span></h2>
+                <small>
+                    <i class="fas fa-school"></i> <span id="teacherClass">Loading...</span> 
+                    <span style="margin: 0 10px;">|</span> 
+                    <i class="fas fa-user-shield"></i> <span id="teacherRole">Teacher</span>
+                </small>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="notification-bell" onclick="showNotifications()">
+                <i class="fas fa-bell"></i>
+                <div class="notification-badge" id="notificationCount">0</div>
+            </div>
+            <div class="time-display">
+                <i class="fas fa-clock"></i> <span id="currentDateTime"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard Navigation -->
+    <div class="dashboard-nav">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">
+                <i class="fas fa-tachometer-alt"></i> Overview
+            </button>
+            <button class="nav-tab" onclick="showTab('students')">
+                <i class="fas fa-user-graduate"></i> My Students
+            </button>
+            <button class="nav-tab" onclick="showTab('drills')">
+                <i class="fas fa-running"></i> Drill Control
+            </button>
+            <button class="nav-tab" onclick="showTab('assessments')">
+                <i class="fas fa-clipboard-check"></i> Assessments
+            </button>
+            <button class="nav-tab" onclick="showTab('reports')">
+                <i class="fas fa-chart-line"></i> Reports
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <!-- Stats Overview -->
+            <div class="stats-overview">
+                <div class="stat-card students">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" id="totalStudents">0</div>
+                            <div class="stat-label">My Students</div>
+                            <div class="stat-trend"><i class="fas fa-arrow-up"></i> All enrolled</div>
+                        </div>
+                        <div class="stat-icon students">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card drills">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" id="activeDrills">0</div>
+                            <div class="stat-label">Active Drills</div>
+                            <div class="stat-trend"><i class="fas fa-play"></i> In progress</div>
+                        </div>
+                        <div class="stat-icon drills">
+                            <i class="fas fa-running"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card progress">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" id="avgProgress">0%</div>
+                            <div class="stat-label">Class Average</div>
+                            <div class="stat-trend"><i class="fas fa-arrow-up"></i> Improving</div>
+                        </div>
+                        <div class="stat-icon progress">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card alerts">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" id="pendingAlerts">0</div>
+                            <div class="stat-label">Notifications</div>
+                            <div class="stat-trend"><i class="fas fa-bell"></i> Unread</div>
+                        </div>
+                        <div class="stat-icon alerts">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Quick Actions -->
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                        Quick Actions
+                    </h3>
+                    <button class="action-btn danger" onclick="startEmergencyDrill()">
+                        <i class="fas fa-exclamation-circle"></i> Emergency Drill
+                    </button>
+                    <button class="action-btn success" onclick="viewStudents()">
+                        <i class="fas fa-users"></i> View Students
+                    </button>
+                    <button class="action-btn warning" onclick="sendAlert()">
+                        <i class="fas fa-bullhorn"></i> Send Alert
+                    </button>
+                    <button class="action-btn" onclick="generateReport()">
+                        <i class="fas fa-file-alt"></i> Generate Report
+                    </button>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-history"></i></div>
+                        Recent Activities & Notifications
+                    </h3>
+                    <div id="recentActivities">
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">🔥</div>
+                                <div class="student-details">
+                                    <h4>Fire drill completed</h4>
+                                    <small>Class participation - 2 minutes ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">👤</div>
+                                <div class="student-details">
+                                    <h4>New student assessment</h4>
+                                    <small>Priya completed quiz - 10 minutes ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">📝</div>
+                                <div class="student-details">
+                                    <h4>Module completed</h4>
+                                    <small>Earthquake Safety - 1 hour ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Alerts -->
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        System Alerts & Updates
+                    </h3>
+                    <div id="systemAlerts">
+                        <div style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-bottom: 15px;">
+                            <strong><i class="fas fa-cloud-rain"></i> Weather Alert</strong><br>
+                            <small>Heavy rainfall expected in next 2 hours</small>
+                        </div>
+                        <div style="padding: 15px; background: #f8d7da; border-left: 4px solid #dc3545; border-radius: 8px; margin-bottom: 15px;">
+                            <strong><i class="fas fa-fire"></i> Fire Drill Scheduled</strong><br>
+                            <small>Tomorrow at 10:00 AM - All blocks</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Tab -->
+        <div id="students" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-users"></i></div>
+                        My Class Students
+                    </h3>
+                    <div class="student-list" id="studentsList">
+                        <!-- Students will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
+                        Class Progress Overview
+                    </h3>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <strong>Earthquake Safety</strong>
+                            <span style="color: #2ecc71;">85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <strong>Fire Safety</strong>
+                            <span style="color: #f39c12;">72%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 72%; background: linear-gradient(90deg, #f39c12, #e67e22);"></div>
+                        </div>
+                    </div>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <strong>Flood Response</strong>
+                            <span style="color: #e74c3c;">63%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 63%; background: linear-gradient(90deg, #e74c3c, #c0392b);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drill Control Tab -->
+        <div id="drills" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-play"></i></div>
+                        Start Class Drill
+                    </h3>
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <strong>Current Status:</strong> <span id="drillStatusText">No active drills. Ready to start emergency simulation.</span>
+                    </div>
+                    <button class="action-btn danger" onclick="startDrill('fire')">
+                        <i class="fas fa-fire"></i> Fire Drill
+                    </button>
+                    <button class="action-btn" onclick="startDrill('earthquake')">
+                        <i class="fas fa-house-damage"></i> Earthquake Drill
+                    </button>
+                    <button class="action-btn warning" onclick="startDrill('lockdown')">
+                        <i class="fas fa-lock"></i> Lockdown Drill
+                    </button>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-history"></i></div>
+                        Recent Drill History
+                    </h3>
+                    <div id="drillHistory">
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">🔥</div>
+                                <div class="student-details">
+                                    <h4>Fire Evacuation Drill</h4>
+                                    <small>Completed in 2:45 minutes - Yesterday</small>
+                                </div>
+                            </div>
+                            <span class="progress-badge completed">Passed</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">🏠</div>
+                                <div class="student-details">
+                                    <h4>Earthquake Drill</h4>
+                                    <small>Completed in 3:20 minutes - 2 days ago</small>
+                                </div>
+                            </div>
+                            <span class="progress-badge completed">Passed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessments Tab -->
+        <div id="assessments" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-plus"></i></div>
+                        Create Assessment
+                    </h3>
+                    <button class="action-btn" onclick="createQuiz()">
+                        <i class="fas fa-question-circle"></i> Create New Quiz
+                    </button>
+                    <button class="action-btn success" onclick="viewSubmissions()">
+                        <i class="fas fa-eye"></i> View Submissions
+                    </button>
+                    <button class="action-btn warning" onclick="gradeAssignments()">
+                        <i class="fas fa-check"></i> Grade Assignments
+                    </button>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-list"></i></div>
+                        Recent Student Submissions
+                    </h3>
+                    <div id="recentSubmissions">
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">RK</div>
+                                <div class="student-details">
+                                    <h4>Rahul Kumar</h4>
+                                    <small>Earthquake Quiz - Score: 85%</small>
+                                </div>
+                            </div>
+                            <span class="progress-badge completed">Graded</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">PS</div>
+                                <div class="student-details">
+                                    <h4>Priya Singh</h4>
+                                    <small>Fire Safety Quiz - Score: 92%</small>
+                                </div>
+                            </div>
+                            <span class="progress-badge completed">Graded</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">AS</div>
+                                <div class="student-details">
+                                    <h4>Amit Sharma</h4>
+                                    <small>Flood Response - Pending</small>
+                                </div>
+                            </div>
+                            <span class="progress-badge in-progress">Review</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-download"></i></div>
+                        Generate Class Reports
+                    </h3>
+                    <button class="action-btn" onclick="generateClassReport()">
+                        <i class="fas fa-users"></i> Class Progress Report
+                    </button>
+                    <button class="action-btn success" onclick="generateDrillReport()">
+                        <i class="fas fa-running"></i> Drill Performance Report
+                    </button>
+                    <button class="action-btn warning" onclick="generateSafetyReport()">
+                        <i class="fas fa-shield-alt"></i> Safety Compliance Report
+                    </button>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>
+                        <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
+                        Class Performance Metrics
+                    </h3>
+                    <div style="margin: 20px 0;">
+                        <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                            <strong>Class Average:</strong> <span>78%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                            <strong>Drill Success Rate:</strong> <span>95%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                            <strong>Module Completion:</strong> <span>87%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                            <strong>Certificates Issued:</strong> <span>23</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="multi-auth.js"></script>
+    <script>
+        // Initialize teacher dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = requireAuth(['teacher']);
+            if (user) {
+                initializeTeacherDashboard(user);
+                updateDateTime();
+                setInterval(updateDateTime, 60000);
+            }
+        });
+        
+        function initializeTeacherDashboard(user) {
+            // Set teacher info
+            document.getElementById('teacherName').textContent = user.name;
+            document.getElementById('teacherClass').textContent = user.class || 'Multiple Classes';
+            document.getElementById('teacherRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+            
+            // Set avatar initial
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('teacherAvatar').textContent = initials;
+            
+            // Load dashboard data
+            loadDashboardStats();
+            loadStudentsList();
+            loadTeacherNotifications();
+        }
+        
+        function loadDashboardStats() {
+            // Simulate real data
+            animateCounter('totalStudents', 32);
+            animateCounter('activeDrills', 1);
+            animateCounter('avgProgress', 78, '%');
+            animateCounter('pendingAlerts', 2);
+        }
+        
+        function animateCounter(elementId, target, suffix = '') {
+            const element = document.getElementById(elementId);
+            let current = 0;
+            const increment = target / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current) + suffix;
+            }, 50);
+        }
+        
+        // Load teacher notifications
+        function loadTeacherNotifications() {
+            const notifications = notificationManager.getNotificationsForRole('teacher');
+            const unreadCount = notificationManager.getUnreadCount('teacher');
+            
+            // Update notification badge
+            const badge = document.getElementById('notificationCount');
+            badge.textContent = unreadCount;
+            badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+            
+            // Show notifications in recent activities
+            const activities = document.getElementById('recentActivities');
+            if (notifications.length > 0) {
+                const notificationHTML = notifications.slice(0, 2).map(n => `
+                    <div class="student-item" onclick="markNotificationRead(${n.id})" style="cursor: pointer;">
+                        <div class="student-info">
+                            <div class="student-avatar">${n.type === 'danger' ? '🚨' : n.type === 'warning' ? '⚠️' : 'ℹ️'}</div>
+                            <div class="student-details">
+                                <h4>${n.title}</h4>
+                                <small>${n.message.substring(0, 50)}... - ${new Date(n.timestamp).toLocaleString()}</small>
+                            </div>
+                        </div>
+                        ${!n.read ? '<span class="progress-badge not-started">New</span>' : ''}
+                    </div>
+                `).join('');
+                
+                activities.innerHTML = notificationHTML + activities.innerHTML;
+            }
+        }
+        
+        // Load students list with enhanced UI
+        function loadStudentsList() {
+            const students = [
+                { name: 'Rahul Kumar', progress: 'completed', module: 'Earthquake Safety', score: '85%' },
+                { name: 'Priya Singh', progress: 'in-progress', module: 'Fire Safety', score: '72%' },
+                { name: 'Amit Sharma', progress: 'completed', module: 'Flood Response', score: '91%' },
+                { name: 'Sneha Patel', progress: 'not-started', module: 'Emergency Prep', score: '-' },
+                { name: 'Vikash Gupta', progress: 'in-progress', module: 'Cyclone Safety', score: '63%' }
+            ];
+            
+            const studentsList = document.getElementById('studentsList');
+            studentsList.innerHTML = '';
+            
+            students.forEach((student, index) => {
+                const div = document.createElement('div');
+                div.className = 'student-item';
+                div.style.animationDelay = `${index * 0.1}s`;
+                
+                const initials = student.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                div.innerHTML = `
+                    <div class="student-info">
+                        <div class="student-avatar">${initials}</div>
+                        <div class="student-details">
+                            <h4>${student.name}</h4>
+                            <small>Current: ${student.module} | Score: ${student.score}</small>
+                        </div>
+                    </div>
+                    <span class="progress-badge ${student.progress}">${student.progress.replace('-', ' ')}</span>
+                `;
+                studentsList.appendChild(div);
+            });
+        }
+        
+        // Mark notification as read
+        function markNotificationRead(notificationId) {
+            notificationManager.markAsRead(notificationId);
+            loadTeacherNotifications(); // Refresh
+        }
+        
+        // Tab navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Dashboard functions
+        function startEmergencyDrill() {
+            if(confirm('Start emergency drill for your class?')) {
+                document.getElementById('drillStatusText').textContent = 'Emergency drill in progress for your class...';
+                showNotification('Emergency drill started successfully for your class!', 'success');
+            }
+        }
+        
+        function viewStudents() {
+            showTab('students');
+        }
+        
+        function sendAlert() {
+            const message = prompt('Enter alert message for your students:');
+            if(message) {
+                showNotification('Alert sent to your class students: ' + message, 'success');
+            }
+        }
+        
+        function generateReport() {
+            showNotification('Generating class progress report...', 'info');
+            setTimeout(() => {
+                showNotification('Class report generated successfully! Check downloads.', 'success');
+            }, 2000);
+        }
+        
+        function startDrill(type) {
+            const drillType = type.charAt(0).toUpperCase() + type.slice(1);
+            if(confirm(`Start ${drillType} drill for your class?`)) {
+                document.getElementById('drillStatusText').textContent = `${drillType} drill in progress for your class...`;
+                showNotification(`${drillType} drill started successfully for your class!`, 'success');
+            }
+        }
+        
+        function createQuiz() {
+            showNotification('Quiz creation module loading...', 'info');
+        }
+        
+        function viewSubmissions() {
+            showNotification('Loading student submissions...', 'info');
+        }
+        
+        function gradeAssignments() {
+            showNotification('Opening grading interface...', 'info');
+        }
+        
+        function generateClassReport() {
+            showNotification('Generating comprehensive class report...', 'info');
+        }
+        
+        function generateDrillReport() {
+            showNotification('Generating drill performance analysis...', 'info');
+        }
+        
+        function generateSafetyReport() {
+            showNotification('Generating safety compliance report...', 'info');
+        }
+        
+        function showNotifications() {
+            const notifications = notificationManager.getNotificationsForRole('teacher');
+            let notificationList = notifications.map(n => 
+                `• ${n.title}: ${n.message} (${new Date(n.timestamp).toLocaleString()})`
+            ).join('\n\n');
+            
+            if (notificationList) {
+                alert('Recent Notifications:\n\n' + notificationList);
+            } else {
+                alert('No notifications available.');
+            }
+        }
+        
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-IN', options);
+        }
+    </script>
+</body>
+</html>

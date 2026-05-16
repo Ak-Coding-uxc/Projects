@@ -1,0 +1,27 @@
+{
+  "name": "face-swap-app",
+  "version": "1.0.0",
+  "description": "Full-stack face swap web app using Gemini image editing model",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "gemini",
+    "face-swap",
+    "express",
+    "image-editing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^1.8.0",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
